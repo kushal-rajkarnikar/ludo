@@ -1,0 +1,174 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+	<input type="button" onclick="rollDice()" value="Button">
+
+	<style>
+		#canvas{
+			/* width: 640px;
+			height: 640px; */
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -320px;
+			margin-top: -320px;
+			border:  1px solid black;
+		}	
+	</style>
+
+	<canvas id="canvas"></canvas>
+
+	<script>
+
+//Preliminary testing for random number generation
+function BasicRandomTests(){
+
+	function getRandomIntInclusive(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+}
+
+var number_of_ones = 0;
+
+for (var counter = 1; counter<=100; counter++){
+	var result = getRandomIntInclusive(1, 6);	
+	console.log(("Random number is: " + result));
+	if (result == 1){
+		number_of_ones = number_of_ones + 1;
+		console.log("its a 1 !");
+	}
+}
+
+// console.log("the datatype of result is currently " + typeof(result));
+
+console.log("number of ones : " + number_of_ones);
+}
+
+var game_over = 0;
+
+class Player{  	
+  	// Player(position){
+  	// 	this.relative_position = position;
+  	// 	p1.protoype.g1 = function(){ }
+  	// }
+  	// The constructor sets the absolute player 
+  	constructor(absolute_position_of_player){
+  		this.relative_position = -1;
+  		this.absolute_position = absolute_position_of_player;
+  	}
+
+  	turn(player_number){
+  		this.steps = this.getRandomIntInclusive(1,6);		  		
+
+  		if (this.relative_position == 55){
+  			console.log("PLAYER " + player_number + " WINS!");
+  			game_over = 1;
+  		}
+  		else if (this.relative_position > 55){
+
+  		}
+  		else if (this.relative_position < 55){
+  			this.relative_position = this.relative_position + this.steps;
+  			this.absolute_position = this.absolute_position + this.steps;
+  		}
+
+  		console.log("Player " + player_number + "'s Turn ... rolls dice ... result is: " + this.steps);
+
+		//this.relative_position = this.relative_position + steps;
+		//
+		
+		console.log("Player " + player_number + "'s relative position is " + this.relative_position);
+		console.log("Player " + player_number + "'s absolute position is " + this.absolute_position);
+		
+		if (this.steps == 1 || this.steps ==6){
+			this.turn(player_number);			
+		}		
+	}
+	getRandomIntInclusive(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+  		return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+  	}
+  }
+
+  let player1 = new Player(0);
+  let player2 = new Player(13);
+  let player3 = new Player(25);
+  let player4 = new Player(37);
+
+  // gameNotOver(){
+
+  //  }
+
+  function rollDice(){
+  	if (!game_over){
+  		player1.turn(1);
+  		player2.turn(2);
+  		player3.turn(3);
+  		player4.turn(4);
+  	};
+  }
+
+  function gameNotOver(){
+  	if (player1.relative_position == 55 || player2.relative_position == 55 || player3.relative_position == 55 || player4.relative_position == 55){
+  		return false;
+  	}
+  	else {
+  		return true;
+  	}
+  }
+
+  function initializeGame(){
+  	drawBoard();
+  };
+
+  function drawBoard(){
+  	var canvas = document.getElementById('canvas');
+  	canvas.width = 640; //or other value
+	canvas.height = 640; //or other value
+	if (canvas.getContext) {
+		var ctx = canvas.getContext('2d');
+
+		function drawBorder(xPos, yPos, width, height, thickness = 0)
+		{
+			ctx.fillStyle='#88be4c';
+			ctx.strokeRect(xPos - (thickness), yPos - (thickness), width + (thickness * 2), height + (thickness * 2));
+		}
+
+		ctx.strokeRect(0, 0, 230, 230);
+		ctx.strokeRect(410, 0, 230, 230);
+		ctx.strokeRect(0, 410, 230, 230);
+		ctx.strokeRect(410, 410, 230, 230);
+
+		//green boxes
+		ctx.fillStyle='#88be4c';		
+		ctx.strokeRect(230, 580, 60, 60);		
+		ctx.strokeRect(230, 520, 60, 60);		
+		ctx.strokeRect(230, 460, 60, 60);		
+		ctx.strokeRect(230, 400, 60, 60);		
+
+		ctx.strokeRect(290, 580, 60, 60);		
+		ctx.fillRect(290, 520, 60, 60);
+		drawBorder(290, 520, 60, 60);
+		ctx.fillRect(290, 460, 60, 60);
+		drawBorder(290, 460, 60, 60);
+		ctx.fillRect(290, 400, 60, 60);
+		drawBorder(290, 400, 60, 60);
+
+		ctx.strokeRect(350, 580, 60, 60);
+		ctx.strokeRect(350, 520, 60, 60);
+		ctx.strokeRect(350, 460, 60, 60);
+		ctx.strokeRect(350, 400, 60, 60);
+	}
+};
+
+initializeGame();
+
+</script>		
+</body>
+</html>
+
