@@ -297,7 +297,7 @@ class Player{
   	turn(player_number){
   		this.steps = this.getRandomIntInclusive(1,6);		  		
 
-  		//this.steps = 1;
+  		this.steps = 1;
 
   		dice.innerHTML = this.steps;
 
@@ -305,20 +305,23 @@ class Player{
 
   		turn.innerHTML = "Player " + player_number + "'s turn:";
 
-  		if (this.relative_position == 39){
-  			console.log("PLAYER " + player_number + " WINS!");
-  			game_over = 1;
+  		// if (this.relative_position == 39){
+  		// 	console.log("PLAYER " + player_number + " WINS!");
+  		// 	game_over = 1;
+  		// }
+  		 
+  		if(this.relative_position > 39){
+  			this.relative_position = this.relative_position - 39;
+  			this.absolute_position = this.absolute_position - 39;
   		}
-  		else if (this.relative_position > 55){
-
-  		}
-  		else if (this.relative_position < 55){
+  		else if (this.relative_position <= 39){
   			this.relative_position = this.relative_position + this.steps;
-  			this.absolute_position = this.absolute_position + this.steps;
-  			if (this.absolute_position > 39){
-				this.absolute_position = this.absolute_position - 39;
-			}
+  			this.absolute_position = this.absolute_position + this.steps;  			
   		}
+  	// 	else if (this.relative_position > 55){
+
+  	// 	}
+  		
 
   		console.log("Player " + player_number + "'s Turn ... rolls dice ... result is: " + this.steps);
 
@@ -336,11 +339,11 @@ class Player{
 
 		var posY1, posX1;
 
-		if(player_number == 1){
+		if(player_number == 2){
 			colorfill = '#11ae4b';
 
 			/* POSITION DETERMINED BY ABSOLUTE POSITION */
-			if (this.absolute_position <= 3){
+			if (this.absolute_position >= 0 && this.absolute_position <= 3){
 				posY1 = 570 - ((this.absolute_position) * 60);
 				posX1 = 270;
 			}
@@ -463,9 +466,9 @@ class Player{
 
 
 		/*1 or 6 results in the same player's turn once again*/
-		 if (this.steps == 1 || this.steps ==6){
-		 	this.turn(player_number);			
-		 }		
+		 // if (this.steps == 1 || this.steps ==6){
+		 // 	this.turn(player_number);			
+		 // }		
 		
 		
 
@@ -489,8 +492,8 @@ class Player{
 
   function rollDice(){
   	if (!game_over){
-  		 player1.turn(1);
-  		 //player2.turn(2);
+  		 //player1.turn(1);
+  		 player2.turn(2);
   		// player3.turn(3);
   		// player4.turn(4);
   	};
