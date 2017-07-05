@@ -4,10 +4,31 @@
 </head>
 <body>
 
-	<input type="button" onclick="rollDice()" value="Button">
+	<div id="turn">
+		Player 1's turn
+	</div>
+
+	<input type="button" onclick="rollDice()" value="Roll the Dice !">
+
+	
 
 	<style>
-		#canvas{
+		#dice{
+			height: 100px;
+			width: 100px;
+			position: absolute;
+			top: 100px;
+			left: 100px;
+			border: 1px solid #ddd;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-weight: bold;
+			font-size: 36px;
+			color:  black;
+			font-family: 'Arial';
+		}
+		#canvas, #playercanvas{
 			/* width: 640px;
 			height: 640px; */
 			position: absolute;
@@ -19,36 +40,244 @@
 		}	
 	</style>
 
+	<div id="dice">
+		
+	</div>
 	<canvas id="canvas"></canvas>
+	<canvas id="playercanvas"></canvas>
 
 	<script>
 
-//Preliminary testing for random number generation
-function BasicRandomTests(){
+	// some essential flags
+	var game_over = 0;
 
-	function getRandomIntInclusive(min, max) {
-		min = Math.ceil(min);
-		max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
-}
+	// initializing the players' circles
+	// var circle = new Path2D();
+  	// var circle2 = new Path2D();
+  	// var circle3 = new Path2D();
+  	// var circle4 = new Path2D();
 
-var number_of_ones = 0;
+	// defining canvases and contexts
+	var canvas = document.getElementById('canvas');
+  	canvas.width = 660;//or other value
+	canvas.height = 660; //or other value
+	// if (canvas.getContext) {
+		var ctx = canvas.getContext('2d');
 
-for (var counter = 1; counter<=100; counter++){
-	var result = getRandomIntInclusive(1, 6);	
-	console.log(("Random number is: " + result));
-	if (result == 1){
-		number_of_ones = number_of_ones + 1;
-		console.log("its a 1 !");
-	}
-}
+		var player_canvas = document.getElementById('playercanvas');
+  	player_canvas.width = 660;//or other value
+	player_canvas.height = 660; //or other value
+	// if (canvas.getContext) {
+		var player_ctx = player_canvas.getContext('2d');
 
-// console.log("the datatype of result is currently " + typeof(result));
 
-console.log("number of ones : " + number_of_ones);
-}
 
-var game_over = 0;
+
+
+
+		function initializeGame(){
+			drawBoard();
+
+			//green player
+			drawPlayer('#11ae4b', 270, 570);
+			//red player
+			drawPlayer('#e5432e', 90, 330);
+			//blue player
+			drawPlayer('#ecdb48', 390, 90);						
+			//yellow player
+			drawPlayer('#ffe100', 570, 390);
+  	//resetPlayersPositions();
+  };
+
+  function clearPlayerContext(){
+  	player_ctx.clearRect(0,0,660,660);
+  }
+
+  function drawPlayer(fillStyleColor, posX, posY){  	
+  	player_ctx.fillStyle = fillStyleColor;	
+  	var circle = new Path2D();
+  	circle.arc(posX, posY, 20, 0, 2 * Math.PI);
+  	player_ctx.fill(circle);
+  	player_ctx.stroke(circle);
+  }
+
+
+  function drawBoard(){
+  	function drawBorder(xPos, yPos, width, height, thickness = 0)
+  	{
+
+  		ctx.strokeRect(xPos - (thickness), yPos - (thickness), width + (thickness * 2), height + (thickness * 2));
+  	}
+
+
+		// 4 boxes on edges
+		ctx.strokeRect(0, 0, 240, 240);
+		ctx.strokeRect(420, 0, 240, 240);
+		ctx.strokeRect(0, 420, 240, 240);
+		ctx.strokeRect(420, 420, 240, 240);
+
+
+		ctx.strokeRect(240, 600, 60, 60);		
+		ctx.strokeRect(240, 540, 60, 60);		
+		ctx.strokeRect(240, 480, 60, 60);		
+		ctx.strokeRect(240, 420, 60, 60);		
+
+		ctx.strokeRect(240, 360, 60, 60);
+
+		//green boxes
+		ctx.fillStyle='#76bc51';	
+		ctx.strokeRect(300, 600, 60, 60);		
+		ctx.fillRect(240, 540, 60, 60);
+		drawBorder(240, 540, 60, 60);
+		ctx.fillRect(300, 540, 60, 60);
+		drawBorder(300, 540, 60, 60);
+		ctx.fillRect(300, 480, 60, 60);
+		drawBorder(300, 480, 60, 60);
+		ctx.fillRect(300, 420, 60, 60);
+		drawBorder(300, 420, 60, 60);
+		ctx.fillRect(300, 360, 60, 60);
+		drawBorder(300, 360, 60, 60);
+
+		ctx.strokeRect(360, 600, 60, 60);
+		ctx.strokeRect(360, 540, 60, 60);
+		ctx.strokeRect(360, 480, 60, 60);
+		ctx.strokeRect(360, 420, 60, 60);
+
+		ctx.strokeRect(360, 360, 60, 60);
+
+		// to the left
+		ctx.strokeRect(0, 240, 60, 60);
+		ctx.strokeRect(60, 240, 60, 60);
+		ctx.strokeRect(120, 240, 60, 60);
+		ctx.strokeRect(180, 240, 60, 60);
+
+		ctx.strokeRect(240, 240, 60, 60);
+
+		ctx.fillStyle='#e9624a';	
+		ctx.strokeRect(0, 300, 60, 60);
+		ctx.fillRect(60, 240, 60, 60);
+		drawBorder(60, 240, 60, 60);
+		ctx.fillRect(60, 300, 60, 60);
+		drawBorder(60, 300, 60, 60);
+		ctx.fillRect(120, 300, 60, 60);
+		drawBorder(120, 300, 60, 60);
+		ctx.fillRect(180, 300, 60, 60);
+		drawBorder(180, 300, 60, 60);
+		ctx.fillRect(240, 300, 60, 60);
+		drawBorder(240, 300, 60, 60);
+
+		ctx.strokeRect(0, 360, 60, 60);
+		ctx.strokeRect(60, 360, 60, 60);
+		ctx.strokeRect(120, 360, 60, 60);
+		ctx.strokeRect(180, 360, 60, 60);
+
+		//to the top
+		ctx.strokeRect(240, 0, 60, 60);
+		ctx.strokeRect(240, 60, 60, 60);
+		ctx.strokeRect(240, 120, 60, 60);
+		ctx.strokeRect(240, 180, 60, 60);		
+
+		ctx.fillStyle='#7164ac';		
+		ctx.strokeRect(300, 0, 60, 60);
+		ctx.fillRect(360, 60, 60, 60);
+		drawBorder(360, 60, 60, 60);
+		ctx.fillRect(300, 60, 60, 60);
+		drawBorder(300, 60, 60, 60);
+		ctx.fillRect(300, 120, 60, 60);
+		drawBorder(300, 120, 60, 60);
+		ctx.fillRect(300, 180, 60, 60);	
+		drawBorder(300, 180, 60, 60);
+		ctx.fillRect(300, 240, 60, 60);	
+		drawBorder(300, 240, 60, 60);
+
+		ctx.strokeRect(360, 0, 60, 60);
+		ctx.strokeRect(360, 60, 60, 60);
+		ctx.strokeRect(360, 120, 60, 60);
+		ctx.strokeRect(360, 180, 60, 60);	
+
+		//to the right
+		ctx.strokeRect(420, 240, 60, 60);
+		ctx.strokeRect(480, 240, 60, 60);
+		ctx.strokeRect(540, 240, 60, 60);
+		ctx.strokeRect(600, 240, 60, 60);
+
+		ctx.strokeRect(360, 240, 60, 60);
+		
+		ctx.fillStyle='#ecdb48';		
+		ctx.fillRect(360, 300, 60, 60);
+		drawBorder(360, 300, 60, 60);
+		ctx.fillRect(420, 300, 60, 60);
+		drawBorder(420, 300, 60, 60);
+		ctx.fillRect(480, 300, 60, 60);
+		drawBorder(480, 300, 60, 60);
+		ctx.fillRect(540, 300, 60, 60);
+		drawBorder(540, 300, 60, 60);
+		ctx.fillRect(540, 360, 60, 60);
+		drawBorder(540, 360, 60, 60);
+		
+		ctx.strokeRect(420, 360, 60, 60);
+		ctx.strokeRect(480, 360, 60, 60);
+		ctx.strokeRect(540, 360, 60, 60);
+		ctx.strokeRect(600, 360, 60, 60);
+
+		var circlehome = new Path2D();
+		var circlehome2 = new Path2D();
+		var circlehome3 = new Path2D();
+		var circlehome4 = new Path2D();
+
+	
+  		// circlehome.moveTo(120, 120);
+  		circlehome.arc(120, 120, 100, 0, 2 * Math.PI);
+  		ctx.fillStyle='#e5432e';	
+  		ctx.fill(circlehome);
+  		
+  		// circlehome.moveTo(360, 120);
+  		circlehome2.arc(540, 120, 100, 0, 2 * Math.PI);
+  		ctx.fillStyle='#384fa2';	
+  		ctx.fill(circlehome2);
+
+  		circlehome3.arc(540, 540, 100, 0, 2 * Math.PI);
+  		ctx.fillStyle='#ffe100';	
+  		ctx.fill(circlehome3);
+
+  		circlehome4.arc(120, 540, 100, 0, 2 * Math.PI);
+  		ctx.fillStyle='#11ae4b';	
+  		ctx.fill(circlehome4);
+
+  		//draw the stars
+  		drawPlayer('#eeeeee', 270, 150);  		
+  		drawPlayer('#eeeeee', 510, 270);  		
+  		drawPlayer('#eeeeee', 390, 510);  		
+  		drawPlayer('#eeeeee', 150, 390);  		
+
+
+		// var xPos = 0;
+		// window.setInterval(function() {
+		// 	var ctx = canvas.getContext('2d');
+		// 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+		// 	drawCircle(50, xPos, 50);
+		// 	xPos++;
+		// }, 50);
+
+		// function drawCircle(radius, x, y) {
+		// 	ctx.beginPath();
+		// 	ctx.arc(x, y, radius, 0, 2*Math.PI);
+		// 	ctx.stroke();
+		// }
+
+
+
+	// }
+};
+
+initializeGame();
+
+
+var dice = document.getElementById("dice");
+    
+var whose_turn_is_it = 1;
+
+var turn = document.getElementById("turn");
 
 class Player{  	
   	// Player(position){
@@ -56,15 +285,27 @@ class Player{
   	// 	p1.protoype.g1 = function(){ }
   	// }
   	// The constructor sets the absolute player 
+
   	constructor(absolute_position_of_player){
-  		this.relative_position = -1;
+  		this.relative_position = 1;
   		this.absolute_position = absolute_position_of_player;
   	}
+
+
+ 	
 
   	turn(player_number){
   		this.steps = this.getRandomIntInclusive(1,6);		  		
 
-  		if (this.relative_position == 55){
+  		//this.steps = 1;
+
+  		dice.innerHTML = this.steps;
+
+
+
+  		turn.innerHTML = "Player " + player_number + "'s turn:";
+
+  		if (this.relative_position == 39){
   			console.log("PLAYER " + player_number + " WINS!");
   			game_over = 1;
   		}
@@ -74,6 +315,9 @@ class Player{
   		else if (this.relative_position < 55){
   			this.relative_position = this.relative_position + this.steps;
   			this.absolute_position = this.absolute_position + this.steps;
+  			if (this.absolute_position > 39){
+				this.absolute_position = this.absolute_position - 39;
+			}
   		}
 
   		console.log("Player " + player_number + "'s Turn ... rolls dice ... result is: " + this.steps);
@@ -84,9 +328,148 @@ class Player{
 		console.log("Player " + player_number + "'s relative position is " + this.relative_position);
 		console.log("Player " + player_number + "'s absolute position is " + this.absolute_position);
 		
-		if (this.steps == 1 || this.steps ==6){
-			this.turn(player_number);			
-		}		
+		
+
+		
+
+		var colorfill = '#000';
+
+		var posY1, posX1;
+
+		if(player_number == 1){
+			colorfill = '#11ae4b';
+
+			/* POSITION DETERMINED BY ABSOLUTE POSITION */
+			if (this.absolute_position <= 3){
+				posY1 = 570 - ((this.absolute_position) * 60);
+				posX1 = 270;
+			}
+			else if (this.absolute_position >=4 && this.absolute_position <= 7){
+				posY1 = 390;
+				posX1 = 270 - ((this.absolute_position - 3) * 60);
+			}
+			else if (this.absolute_position >=8 && this.absolute_position <= 9){
+				posY1 = 390 - ((this.absolute_position - 7) * 60);
+				posX1 = 30;
+			}
+			else if (this.absolute_position >= 10 && this.absolute_position <= 13){
+				posY1 = 270;
+				posX1 = 30 + ((this.absolute_position - 9) * 60);
+			}
+			else if (this.absolute_position >= 14 && this.absolute_position <= 17){
+				posY1 = 270 - ((this.absolute_position - 13) * 60);;
+				posX1 = 270;
+			}
+			else if (this.absolute_position >= 18 && this.absolute_position <= 19){
+				posY1 = 30;
+				posX1 = 270 + ((this.absolute_position - 17) * 60);
+			}
+			else if (this.absolute_position >= 20 && this.absolute_position <= 23){
+				posY1 = 30 + ((this.absolute_position - 19) * 60);
+				posX1 = 390;
+			}
+			else if (this.absolute_position >= 24 && this.absolute_position <= 27){
+				posY1 = 270;
+				posX1 = 390  + ((this.absolute_position - 23) * 60);
+			}
+			else if (this.absolute_position >= 28 && this.absolute_position <= 29){
+				posY1 = 270  + ((this.absolute_position - 27) * 60);
+				posX1 = 630;
+			}
+			else if (this.absolute_position >= 30 && this.absolute_position <= 33){
+				posY1 = 390;  
+				posX1 = 630 - ((this.absolute_position - 29) * 60);
+			}
+			else if (this.absolute_position >= 34 && this.absolute_position <= 37){
+				posY1 = 390 + ((this.absolute_position - 33) * 60);  
+				posX1 = 390; 
+			}
+			else if (this.absolute_position >= 38 && this.absolute_position <= 39){
+				posY1 = 630;  
+				posX1 = 390 - ((this.absolute_position - 37) * 60); 
+			}
+			
+			
+			
+
+			/* POSITION DETERMINED BY RELATIVE POSITION */
+			// if (this.relative_position <= 4){
+			// 	posY1 = 570 - ((this.relative_position - 1) * 60);
+			// 	posX1 = 270;
+			// }
+			// else if (this.relative_position >=5 && this.relative_position <= 8){
+			// 	posY1 = 390;
+			// 	posX1 = 270 - ((this.relative_position - 4) * 60);
+			// }
+			// else if (this.relative_position >=9 && this.relative_position <= 10){
+			// 	posY1 = 390 - ((this.relative_position - 8) * 60);
+			// 	posX1 = 30;
+			// }
+			// else if (this.relative_position >= 11 && this.relative_position <= 14){
+			// 	posY1 = 270;
+			// 	posX1 = 30 + ((this.relative_position - 10) * 60);
+			// }
+			// else if (this.relative_position >= 15 && this.relative_position <= 18){
+			// 	posY1 = 270 - ((this.relative_position - 14) * 60);;
+			// 	posX1 = 270;
+			// }
+			// else if (this.relative_position >= 19 && this.relative_position <= 20){
+			// 	posY1 = 30;
+			// 	posX1 = 270 + ((this.relative_position - 18) * 60);
+			// }
+			// else if (this.relative_position >= 21 && this.relative_position <= 24){
+			// 	posY1 = 30 + ((this.relative_position - 20) * 60);
+			// 	posX1 = 390;
+			// }
+			// else if (this.relative_position >= 25 && this.relative_position <= 28){
+			// 	posY1 = 270;
+			// 	posX1 = 390  + ((this.relative_position - 24) * 60);
+			// }
+			// else if (this.relative_position >= 29 && this.relative_position <= 30){
+			// 	posY1 = 270  + ((this.relative_position - 28) * 60);
+			// 	posX1 = 630;
+			// }
+			// else if (this.relative_position >= 31 && this.relative_position <= 34){
+			// 	posY1 = 390;  
+			// 	posX1 = 630 - ((this.relative_position - 30) * 60);
+			// }
+			// else if (this.relative_position >= 35 && this.relative_position <= 38){
+			// 	posY1 = 390 + ((this.relative_position - 34) * 60);  
+			// 	posX1 = 390; 
+			// }
+
+			clearPlayerContext();
+			drawPlayer(colorfill, posX1, posY1);
+
+		}
+		// else if(player_number == 2){
+		// 	colorfill = '384fa2';
+		// }
+		// else if(player_number == 3){
+		// 	colorfill = 'ffe100';
+		// }
+		// else if(player_number == 4){
+		// 	colorfill = '11ae4b';
+		// }
+
+			// drawPlayer('#11ae4b', 270, 520);
+			// drawPlayer('#e5432e', 90, 330);
+			// drawPlayer('#ffe100', 570, 390);
+			// drawPlayer('#ffe100', 390, 90);
+
+
+
+			console.log(posX1 + ', ' + posY1);
+
+
+		/*1 or 6 results in the same player's turn once again*/
+		 if (this.steps == 1 || this.steps ==6){
+		 	this.turn(player_number);			
+		 }		
+		
+		
+
+
 	}
 	getRandomIntInclusive(min, max) {
 		min = Math.ceil(min);
@@ -96,9 +479,9 @@ class Player{
   }
 
   let player1 = new Player(0);
-  let player2 = new Player(13);
-  let player3 = new Player(25);
-  let player4 = new Player(37);
+  let player2 = new Player(10);
+  let player3 = new Player(20);
+  let player4 = new Player(30);
 
   // gameNotOver(){
 
@@ -106,10 +489,10 @@ class Player{
 
   function rollDice(){
   	if (!game_over){
-  		player1.turn(1);
-  		player2.turn(2);
-  		player3.turn(3);
-  		player4.turn(4);
+  		 player1.turn(1);
+  		 //player2.turn(2);
+  		// player3.turn(3);
+  		// player4.turn(4);
   	};
   }
 
@@ -122,53 +505,9 @@ class Player{
   	}
   }
 
-  function initializeGame(){
-  	drawBoard();
-  };
-
-  function drawBoard(){
-  	var canvas = document.getElementById('canvas');
-  	canvas.width = 640; //or other value
-	canvas.height = 640; //or other value
-	if (canvas.getContext) {
-		var ctx = canvas.getContext('2d');
-
-		function drawBorder(xPos, yPos, width, height, thickness = 0)
-		{
-			ctx.fillStyle='#88be4c';
-			ctx.strokeRect(xPos - (thickness), yPos - (thickness), width + (thickness * 2), height + (thickness * 2));
-		}
-
-		ctx.strokeRect(0, 0, 230, 230);
-		ctx.strokeRect(410, 0, 230, 230);
-		ctx.strokeRect(0, 410, 230, 230);
-		ctx.strokeRect(410, 410, 230, 230);
-
-		//green boxes
-		ctx.fillStyle='#88be4c';		
-		ctx.strokeRect(230, 580, 60, 60);		
-		ctx.strokeRect(230, 520, 60, 60);		
-		ctx.strokeRect(230, 460, 60, 60);		
-		ctx.strokeRect(230, 400, 60, 60);		
-
-		ctx.strokeRect(290, 580, 60, 60);		
-		ctx.fillRect(290, 520, 60, 60);
-		drawBorder(290, 520, 60, 60);
-		ctx.fillRect(290, 460, 60, 60);
-		drawBorder(290, 460, 60, 60);
-		ctx.fillRect(290, 400, 60, 60);
-		drawBorder(290, 400, 60, 60);
-
-		ctx.strokeRect(350, 580, 60, 60);
-		ctx.strokeRect(350, 520, 60, 60);
-		ctx.strokeRect(350, 460, 60, 60);
-		ctx.strokeRect(350, 400, 60, 60);
-	}
-};
-
-initializeGame();
 
 </script>		
 </body>
 </html>
+
 
